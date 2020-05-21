@@ -5,23 +5,36 @@ if [ $EUID != 0 ]; then
 	exit 1
 fi
 
-backupdir="/home/akmijares/backups"
+# Asks for dir and check if it exists. 
+read -p "Enter full dir of where the backups will be located: " backupdir
 
 # Checks and creates dir if needed
 [ ! -d "$backupdir" ] && mkdir -p "$backupdir"
 
-echo "Backing up VMs"
 echo
-echo "Do not touch anything, even if it looks stuck"
-
-cd /var/lib/libvirt/images
-
-for i in {1..3}; do
+echo "Choose one of the following: "
+echo "1 - Backup all VMs"
+echo "2 - Backup a specific VM"
+echo
+read -p "Enter your choice: " ans
+if [ "$ans" == 1 ]; then
+	cd /var/lib/libvirt/images
+	for g in *.qcow2; do
+		echo "Backing up $g"
+		name=$g
+		final=$(basename $name .qcow2)
+		gzip < $g > $backupdir/$final.qcow2.backup.gz
+		virsh dumpxml $final > $backup/$final.xml;
+		done			
+elif [ "$ans" == 2 ]; then
+	cd /var/lib/libvirt/images
 	echo
-	echo "Backing up VM$i"
-	gzip < vm$i.qcow2 > $backupdir/vm$i.qcow2.backup.gz
-	virsh dumpxml vm$i > $backupdir/vm$i.xml
-	echo "VM$i Backup completed"
-	echo;
-done
+	read -p "Enter VM to backup: " vmbackup
+	gzip < $vmbackup.qcow2 > $backup/$vmbackup.qcow2.backup.gz
+	virsh dumpxml $vmbackup > $backup/$vmbackup.xml
+else
+	echo "Unknown answer"
+	exit 1
+fi
+
 
