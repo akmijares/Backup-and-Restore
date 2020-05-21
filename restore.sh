@@ -16,9 +16,19 @@ if [ -d "$dir" ]; then
 	echo
 	read -p "Enter your choice: " ans
 	if [ "$ans" == 1 ]; then
-		echo "1"
+		cd $dir
+		for g in *.qcow2.backup.gz; do
+			name=$g
+			final=$(basename $name .qcow2.backup.gz)
+			gunzip < $g > /var/lib/libvirt/images/$final.qcow2
+			virsh define $final.xml;
+			done			
 	elif [ "$ans" == 2 ]; then
-		echo "2"
+		cd $dir
+		echo
+		read -p "Enter VM to restore: " vmres
+		gunzip < $vmres.qcow2.backup.gz > /var/lib/libvirt/images/$vmres.qcow2
+		virsh define $vmres.xml
 	else
 		echo "Unknown answer"
 		exit 1
