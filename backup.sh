@@ -20,7 +20,7 @@ for i in {1..3}; do
 	echo
 	echo "Backing up VM$i"
 	gzip < vm$i.qcow2 > $backupdir/vm$i.qcow2.backup.gz
-	virsh dumpxml vm1 > $backupdir/vm$i.xml
+	virsh dumpxml vm$i > $backupdir/vm$i.xml
 	echo "VM$i Backup completed"
 	echo;
 done
