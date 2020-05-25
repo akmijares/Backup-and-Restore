@@ -30,8 +30,8 @@ elif [ "$ans" == 2 ]; then
 	cd /var/lib/libvirt/images
 	echo
 	read -p "Enter VM to backup: " vmbackup
-	gzip < $vmbackup.qcow2 > $backup/$vmbackup.qcow2.backup.gz
-	virsh dumpxml $vmbackup > $backup/$vmbackup.xml
+	gzip < $vmbackup.qcow2 > $backupdir/$vmbackup.qcow2.backup.gz
+	virsh dumpxml $vmbackup > $backupdir/$vmbackup.xml
 else
 	echo "Unknown answer"
 	exit 1
