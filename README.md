@@ -18,4 +18,4 @@ When running the backup/restore, don't cancel/touch anything, even if it looks s
 3. Follow the on-screen instructions
 
 # License
-This repo will be under the [MIT License](LICENSE)
+This repo is under the [MIT License](LICENSE)
