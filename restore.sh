@@ -16,6 +16,8 @@ if [ -d "$dir" ]; then
 	echo
 	read -p "Enter your choice: " ans
 	if [ "$ans" == 1 ]; then
+		echo "Do not touch anything, even if it looks stuck."
+		echo "You may risk corrupting the restore."
 		cd $dir
 		for g in *.qcow2.backup.gz; do
 			name=$g
