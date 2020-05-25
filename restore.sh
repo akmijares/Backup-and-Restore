@@ -29,6 +29,7 @@ if [ -d "$dir" ]; then
 		cd $dir
 		echo
 		read -p "Enter VM to restore: " vmres
+		echo "Restoring $vmres"
 		gunzip < $vmres.qcow2.backup.gz > /var/lib/libvirt/images/$vmres.qcow2
 		virsh define $vmres.xml
 	else
