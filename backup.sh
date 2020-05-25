@@ -18,6 +18,8 @@ echo "2 - Backup a specific VM"
 echo
 read -p "Enter your choice: " ans
 if [ "$ans" == 1 ]; then
+	echo "Don't touch anything, even if it looks stuck."
+	echo "You may risk corrupting your backup"
 	cd /var/lib/libvirt/images
 	for g in *.qcow2; do
 		echo "Backing up $g"
