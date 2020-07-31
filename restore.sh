@@ -14,6 +14,7 @@ if [ -d $HOME/"$dir" ]; then
 	echo "Choose one of the following: "
 	echo "1 - Restore all VMs"
 	echo "2 - Restore a specific VM"
+	echo "3 - Exit the program"
 	echo
 	read -p "Enter your choice: " ans
 	if [ "$ans" == 1 ]; then
@@ -33,6 +34,9 @@ if [ -d $HOME/"$dir" ]; then
 		echo "Restoring $vmres"
 		gunzip < $vmres.qcow2.backup.gz > /var/lib/libvirt/images/$vmres.qcow2
 		virsh define $vmres.xml
+	elif [ "$ans" == 3 ]; then
+		echo "Exiting program"
+		exit 1
 	else
 		echo "Unknown answer"
 		exit 1
