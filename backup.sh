@@ -9,7 +9,7 @@ fi
 read -p "Enter full dir of where the backups will be located: " backupdir
 
 # Checks and creates dir if needed
-[ ! -d "$backupdir" ] && mkdir -p "$backupdir"
+[ ! -d $HOME/"$backupdir" ] && mkdir -p $HOME/"$backupdir"
 
 echo
 echo "Choose one of the following: "
