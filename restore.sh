@@ -8,7 +8,7 @@ fi
 # Asks for dir and check if it exists. 
 read -p "Enter full dir of where the backups are located: " dir
 
-if [ -d "$dir" ]; then
+if [ -d $HOME/"$dir" ]; then
 	echo
 	echo "Choose one of the following: "
 	echo "1 - Restore all VMs"
