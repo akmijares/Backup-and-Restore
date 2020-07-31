@@ -6,7 +6,8 @@ if [ $EUID != 0 ]; then
 fi
 
 # Asks for dir and check if it exists. 
-read -p "Enter full dir of where the backups will be located: " backupdir
+echo "Note: This will be in your home directory"
+read -p "Enter the folder name of where the backups will be located: " backupdir
 
 # Checks and creates dir if needed
 [ ! -d $HOME/"$backupdir" ] && mkdir -p $HOME/"$backupdir"
