@@ -16,6 +16,7 @@ echo
 echo "Choose one of the following: "
 echo "1 - Backup all VMs"
 echo "2 - Backup a specific VM"
+echo "3 - Close the program"
 echo
 read -p "Enter your choice: " ans
 if [ "$ans" == 1 ]; then
@@ -36,6 +37,9 @@ elif [ "$ans" == 2 ]; then
 	echo "Backing up $vmbackup"
 	gzip < $vmbackup.qcow2 > $backupdir/$vmbackup.qcow2.backup.gz
 	virsh dumpxml $vmbackup > $backupdir/$vmbackup.xml
+elif [ "$ans" == 3 ]; then
+	echo "Exiting program"
+	exit 1
 else
 	echo "Unknown answer"
 	exit 1
