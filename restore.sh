@@ -5,11 +5,23 @@ if [ $EUID != 0 ]; then
 	exit 1
 fi
 
+
+# Asks for uname
+echo "This is required since you ran this as sudo/root"
+read -p "Enter your username: " uname
+
+if id "$uname" >/dev/null 2>&1; then
+        echo "Found user. Continuing."
+else
+        echo "User does not exist. Please try again"
+        exit 1
+fi
+
 # Asks for dir and check if it exists. 
 echo "Note: This will look in your home directory."
 read -p "Enter the folder name of where the backups are located: " dir
 
-if [ -d $HOME/"$dir" ]; then
+if [ -d /home/$uname/"$dir" ]; then
 	echo
 	echo "Choose one of the following: "
 	echo "1 - Restore all VMs"
@@ -20,7 +32,7 @@ if [ -d $HOME/"$dir" ]; then
 	if [ "$ans" == 1 ]; then
 		echo "Do not touch anything, even if it looks stuck."
 		echo "You may risk corrupting the restore."
-		cd $dir
+		cd /home/$uname/$dir
 		for g in *.qcow2.backup.gz; do
 			name=$g
 			final=$(basename $name .qcow2.backup.gz)
@@ -28,7 +40,7 @@ if [ -d $HOME/"$dir" ]; then
 			virsh define $final.xml;
 			done			
 	elif [ "$ans" == 2 ]; then
-		cd $dir
+		cd /home/$uname/$dir
 		echo
 		read -p "Enter VM to restore: " vmres
 		echo "Restoring $vmres"
@@ -42,6 +54,6 @@ if [ -d $HOME/"$dir" ]; then
 		exit 1
 	fi
 else
-	echo "$dir does not exist. Please double check"
+	echo "/home/$uname/$dir does not exist. Please double check"
 	exit 1
 fi
