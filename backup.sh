@@ -5,12 +5,24 @@ if [ $EUID != 0 ]; then
 	exit 1
 fi
 
+# Asks for uname
+echo "This is required since you ran this as sudo/root"
+read -p "Enter your username: " uname
+
+if id "$uname" >/dev/null 2>&1; then
+	echo "Found user. Continuing."
+else
+        echo "User does not exist. Please try again"
+	exit 1
+fi
+
 # Asks for dir and check if it exists. 
+echo ""
 echo "Note: This will be in your home directory"
 read -p "Enter the folder name of where the backups will be located: " backupdir
 
 # Checks and creates dir if needed
-[ ! -d $HOME/"$backupdir" ] && mkdir -p $HOME/"$backupdir"
+[ ! -d /home/$uname/"$backupdir" ] && mkdir -p /home/$uname/"$backupdir"
 
 echo
 echo "Choose one of the following: "
@@ -27,16 +39,16 @@ if [ "$ans" == 1 ]; then
 		echo "Backing up $g"
 		name=$g
 		final=$(basename $name .qcow2)
-		gzip < $g > $backupdir/$final.qcow2.backup.gz
-		virsh dumpxml $final > $backup/$final.xml;
+		gzip < $g > /home/$uname/$backupdir/$final.qcow2.backup.gz
+		virsh dumpxml $final > /home/$uname/$backupdir/$final.xml;
 		done			
 elif [ "$ans" == 2 ]; then
 	cd /var/lib/libvirt/images
 	echo
 	read -p "Enter VM to backup: " vmbackup
 	echo "Backing up $vmbackup"
-	gzip < $vmbackup.qcow2 > $backupdir/$vmbackup.qcow2.backup.gz
-	virsh dumpxml $vmbackup > $backupdir/$vmbackup.xml
+	gzip < $vmbackup.qcow2 > /home/$uname/$backupdir/$vmbackup.qcow2.backup.gz
+	virsh dumpxml $vmbackup > /home/$uname/$backupdir/$vmbackup.xml
 elif [ "$ans" == 3 ]; then
 	echo "Exiting program"
 	exit 1
