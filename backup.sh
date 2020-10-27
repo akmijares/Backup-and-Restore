@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Adds the uname into the variable
-uname= whoami
+uname=$USER
 
 # Asks for dir and check if it exists. 
 echo "Note: This will be in your home directory"
