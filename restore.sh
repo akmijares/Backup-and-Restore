@@ -1,27 +1,13 @@
 #!/bin/bash
 
-if [ $EUID != 0 ]; then
-	echo "Please run as root or sudo"
-	exit 1
-fi
-
-
-# Asks for uname
-echo "This is required since you ran this as sudo/root"
-read -p "Enter your username: " uname
-
-if id "$uname" >/dev/null 2>&1; then
-        echo "Found user. Continuing."
-else
-        echo "User does not exist. Please try again"
-        exit 1
-fi
+#Add uname to variable
+uname=$USER
 
 # Asks for dir and check if it exists. 
-echo "Note: This will look in your home directory."
+echo "Note: This will look in your home directory. (Assuming you ran backup.sh)"
 read -p "Enter the folder name of where the backups are located: " dir
 
-if [ -d /home/$uname/"$dir" ]; then
+if [ -d $HOME/$uname/"$dir" ]; then
 	echo
 	echo "Choose one of the following: "
 	echo "1 - Restore all VMs"
@@ -29,31 +15,38 @@ if [ -d /home/$uname/"$dir" ]; then
 	echo "3 - Exit the program"
 	echo
 	read -p "Enter your choice: " ans
-	if [ "$ans" == 1 ]; then
-		echo "Do not touch anything, even if it looks stuck."
+	case $ans in
+	1)
+        echo "Do not touch anything, even if it looks stuck."
 		echo "You may risk corrupting the restore."
+sudo -s <<EOF
 		cd /home/$uname/$dir
 		for g in *.qcow2.backup.gz; do
 			name=$g
 			final=$(basename $name .qcow2.backup.gz)
 			gunzip < $g > /var/lib/libvirt/images/$final.qcow2
 			virsh define $final.xml;
-			done			
-	elif [ "$ans" == 2 ]; then
-		cd /home/$uname/$dir
+			done
+EOF
+        ;;
+    
+    2)
+sudo -s <<EOF
+        cd /home/$uname/$dir
 		echo
-		read -p "Enter VM to restore: " vmres
+		read -p "Enter VM to restore (No need to enter '.qcow2.backup.gz': " vmres
 		echo "Restoring $vmres"
 		gunzip < $vmres.qcow2.backup.gz > /var/lib/libvirt/images/$vmres.qcow2
 		virsh define $vmres.xml
-	elif [ "$ans" == 3 ]; then
-		echo "Exiting program"
-		exit 1
-	else
-		echo "Unknown answer"
-		exit 1
-	fi
+EOF
+        ;;
+    
+    3|*)
+        echo "Exiting program"
+        ;;
+	esac
 else
-	echo "/home/$uname/$dir does not exist. Please double check"
+    echo
+	echo "$HOME/$uname/$dir does not exist. Please double check"
 	exit 1
 fi
