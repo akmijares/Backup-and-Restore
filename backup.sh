@@ -16,19 +16,22 @@ echo "Note: This will be in your home directory"
 read -p "Enter the folder name of where the backups will be located: " backupdir
 
 # Checks and creates dir if needed
-[ ! -d $HOME/"$backupdir" ] && mkdir -p $HOME/"$backupdir"
+[ ! -d /home/$user/"$backupdir" ] && mkdir -p /home/$user/"$backupdir"
 
 echo
 echo "Choose one of the following: "
 echo "1 - Backup all VMs"
 echo "2 - Backup a specific VM"
-echo "3 - Close the program"
+echo "3 - Backup multiple VMs"
+echo "4 - Close the program"
 echo
 read -p "Enter your choice: " ans
 
 case $ans in
+
+# Backup all VM
 1)
-    	echo "Don't touch anything, even if it looks stuck."
+    echo "Don't touch anything, even if it looks stuck."
 	echo "You may risk corrupting your backup"
 	echo
 	for g in /var/lib/libvirt/images/*.qcow2;
@@ -41,18 +44,33 @@ case $ans in
 	done
     ;;
 
+# Backup 1 vm
 2)
 	echo
-	sudo virsh list --all
+	virsh list --all
 	echo
-	read -p "Enter VM to backup: " vmbackup
+	read -p "Enter the VM to backup: " vmbackup
 	echo "Backing up $vmbackup"
 	gzip < /var/lib/libvirt/images/$vmbackup.qcow2 > /home/$user/$backupdir/$vmbackup.qcow2.backup.gz
 	virsh dumpxml $vmbackup > /home/$user/$backupdir/$vmbackup.xml
 	echo "Backup of $vmbackup completed"
     ;;
 
-3|*)
+# Backup multiple VM
+3)
+    read -p "How many VMs will you be backing up?" nums
+    virsh list -all
+    echo
+    for i in $(seq 1 $nums);
+    do
+        read -p "Enter the VM to backup" vmsback
+        gzip < /var/lib/libvirt/images/$vmsback.qcow2 > /home/$user/$backupdir/$vmsback.qcow2.backup.gz
+        virsh dumpxml $vmsback > /home/$user/$backupdir/$vmsback.xml
+        echo "Backup of $vmsback finished"
+    ;;
+
+# Exit the program
+4|*)
     echo "Exiting program"
     exit 0
     ;;
