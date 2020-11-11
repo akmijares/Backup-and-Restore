@@ -58,15 +58,17 @@ case $ans in
 
 # Backup multiple VM
 3)
-    read -p "How many VMs will you be backing up?" nums
-    virsh list -all
+    read -p "How many VMs will you be backing up? " nums
+    virsh list --all
     echo
     for i in $(seq 1 $nums);
     do
-        read -p "Enter the VM to backup" vmsback
+        read -p "Enter the VM to backup: " vmsback
+	echo "Backing up $vmsback"
         gzip < /var/lib/libvirt/images/$vmsback.qcow2 > /home/$user/$backupdir/$vmsback.qcow2.backup.gz
         virsh dumpxml $vmsback > /home/$user/$backupdir/$vmsback.xml
         echo "Backup of $vmsback finished"
+    done
     ;;
 
 # Exit the program
